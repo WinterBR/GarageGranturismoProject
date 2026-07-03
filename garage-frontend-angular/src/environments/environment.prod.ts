@@ -5,7 +5,7 @@ export const environment = {
    * Can also be swapped for a relative '/api/v1' if the frontend is
    * served behind the same reverse proxy as the backend.
    */
-  apiBaseUrl: 'http://localhost:8080/api/v1',
+  apiBaseUrl: 'https://garagegranturismoproject.onrender.com/api/v1',
   /**
    * Fallback refresh interval (ms) used only if a stored session is found
    * without an expiresInMs value. Matches the backend's default 5-minute
