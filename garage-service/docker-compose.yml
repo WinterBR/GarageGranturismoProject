@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: garage-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: garage_db
+      POSTGRES_USER: garage_user
+      POSTGRES_PASSWORD: garage_pass
+    ports:
+      - "1883:5432"
+    volumes:
+      - garage_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U garage_user -d garage_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  garage_postgres_data:

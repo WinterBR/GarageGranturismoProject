@@ -1,0 +1,21 @@
+<div class="gt-app">
+  <div class="gt-header-group">
+    <img class="gt-magnifier-img" src="assets/icons/gt_magnifier.png" alt="" />
+    <app-garage-header (logout)="onLogout()"></app-garage-header>
+    <app-filter-bar (newCar)="onNewCar()"></app-filter-bar>
+  </div>
+  <app-car-table (edit)="onEditCar($event)" (remove)="onRemoveCar($event)"></app-car-table>
+</div>
+
+@if (state.error(); as err) {
+  <div class="gt-backend-warning">{{ err }}</div>
+}
+
+<app-car-form-modal #formModal (saved)="onCarSaved($event)"></app-car-form-modal>
+<app-confirm-modal
+  #confirmModal
+  (deleted)="onCarDeleted($event)"
+  (failed)="onDeleteFailed($event)"
+></app-confirm-modal>
+
+<app-toast #toast></app-toast>

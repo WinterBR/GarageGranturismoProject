@@ -1,0 +1,11 @@
+.gt-backend-warning {
+  max-width: 1400px;
+  margin: 0 auto 24px;
+  padding: 14px 20px;
+  background: #2c1c14;
+  border: 1px solid #c0392b;
+  color: #ffb4ac;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+}
