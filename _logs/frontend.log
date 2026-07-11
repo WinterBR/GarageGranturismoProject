@@ -5,25 +5,25 @@
 [33m❯[39m Building...
 [32m✔[39m Building...
 [1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m
-[32mmain.js[39m            [2m | [22m[2mmain[22m         [2m | [22m[36m141.76 kB[39m[2m | [22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m         [2m | [22m[36m156.06 kB[39m[2m | [22m
 [32mpolyfills.js[39m       [2m | [22m[2mpolyfills[22m    [2m | [22m [36m90.20 kB[39m[2m | [22m
-[32mstyles.css[39m         [2m | [22m[2mstyles[22m       [2m | [22m [36m28.08 kB[39m[2m | [22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m       [2m | [22m [36m32.26 kB[39m[2m | [22m
 
-[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m260.04 kB[22m
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m278.51 kB[22m
 
-Application bundle generation complete. [6.295 seconds]
+Application bundle generation complete. [6.651 seconds]
 
 Watch mode enabled. Watching for file changes...
 NOTE: Raw file sizes do not reflect development server per-request transformations.
+Re-optimizing dependencies because vite config has changed
   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4200[22m/[39m
 [2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
 [33m❯[39m Changes detected. Rebuilding...
 [32m✔[39m Changes detected. Rebuilding...
-[1mInitial chunk files[22m[2m | [22m[1mNames[22m [2m | [22m [1mRaw size[22m
-[32mmain.js[39m            [2m | [22m[2mmain[22m  [2m | [22m[36m156.06 kB[39m[2m | [22m
-[32mstyles.css[39m         [2m | [22m[2mstyles[22m[2m | [22m [36m32.26 kB[39m[2m | [22m
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m[2m | [22m [1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m [2m | [22m[36m160.72 kB[39m[2m | [22m
 
-Application bundle generation complete. [4.512 seconds]
+Application bundle generation complete. [3.525 seconds]
 
 Page reload sent to client(s).
 [33m❯[39m Changes detected. Rebuilding...
@@ -31,6 +31,6 @@ Page reload sent to client(s).
 
 No output file changes.
 
-Application bundle generation complete. [1.977 seconds]
+Application bundle generation complete. [0.408 seconds]
 
 Deseja finalizar o arquivo em lotes (S/N)? 

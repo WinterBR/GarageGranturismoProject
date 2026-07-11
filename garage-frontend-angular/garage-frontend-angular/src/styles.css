@@ -1,0 +1,1678 @@
+/* =====================================================================
+   Garage — Gran Turismo 4 inspired UI
+   Typeface: Helvetica Pan-European LT Std (licensed font, bundled below
+   as a set of static OTF faces covering the weights/styles used in this
+   stylesheet, so the title and labels render in the real font instead
+   of falling back to the browser default).
+   ===================================================================== */
+
+@font-face {
+  font-family: "Helvetica Pan-European LT Std";
+  src: url("fonts/HelveticaLTStd-Roman.otf") format("opentype");
+  font-weight: 100 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Helvetica Pan-European LT Std";
+  src: url("fonts/HelveticaLTStd-Oblique.otf") format("opentype");
+  font-weight: 100 500;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Helvetica Pan-European LT Std";
+  src: url("fonts/HelveticaLTStd-Bold.otf") format("opentype");
+  font-weight: 600 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Helvetica Pan-European LT Std";
+  src: url("fonts/HelveticaLTStd-BoldOblique.otf") format("opentype");
+  font-weight: 600 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Helvetica Pan-European LT Std";
+  src: url("fonts/HelveticaLTStd-Black.otf") format("opentype");
+  font-weight: 800 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Helvetica Pan-European LT Std";
+  src: url("fonts/HelveticaLTStd-BlackOblique.otf") format("opentype");
+  font-weight: 800 900;
+  font-style: italic;
+}
+
+:root {
+  --font-display: "Helvetica Pan-European LT Std", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* metallic chrome grays */
+  --chrome-1: #3a3a3a;
+  --chrome-2: #5e5e5e;
+  --chrome-3: #7c7c7c;
+  --chrome-4: #9a9a9a;
+  --chrome-5: #b8b8b8;
+
+  /* filter bar */
+  --dropdown-bg-top: #d7d6d8;
+  --dropdown-bg-bottom: #9a999c;
+  --dropdown-border: #4a4a4a;
+
+  /* table */
+  --table-head-bg: #6c6c6c;
+  --row-dark-1: #181818;
+  --row-dark-2: #222222;
+  --row-g1-odd:  #181818;
+  --row-g2-odd:  #1D1D1D;
+  --row-g3-odd:  #2E2E2E;
+  --row-g1-even: #222222;
+  --row-g2-even: #212121;
+  --row-g3-even: #323232;
+  --row-g1-sel:  #8A6B27;
+  --row-g1-sel-hover: #a3812f;
+  --row-g2-sel:  #8A6D29;
+  --row-g3-sel:  #92752B;
+  --row-selected-top: #8A6B27;
+  --row-selected-bottom: #8A6B27;
+  --row-text: #e8e8e8;
+  --row-text-dim: #9a9a9a;
+  --row-text-selected: #ffffff;
+
+  /* accents */
+  --gold-1: #f3cf6e;
+  --gold-2: #d9a431;
+  --gold-3: #a87a1f;
+  --gold-text: #ffb238;
+
+  /* table-header column-picker buttons (Engine / Power / Weight) */
+  --coltrigger-field-bg: #96989E;
+  --coltrigger-arrow-top: #95949A;
+  --coltrigger-arrow-bottom: #B6B8BC;
+  --coltrigger-border: #0a0a0a;
+  --coltrigger-arrow-color: #0a0a0a;
+
+  /* reverse-order ("spin") button, fixed before the Power header */
+  --invert-bg: #b29058;
+  --invert-border: #6e5a40;
+  --invert-chevron: #0a0a0a;
+
+  --danger: #c0392b;
+  --panel-bg: #2c2c2c;
+
+  --radius-sm: 3px;
+
+  /* Table data-cell text shadow: darker, farther offset, and thicker than
+     the header/title shadows, but still pixel-sharp (zero blur). Built
+     from several solid, unblurred offsets stacked at increasing distance
+     so the shadow reads as a thick block behind the letters instead of a
+     blurred glow. */
+  --gt-cell-shadow:
+    1px 1px 0 rgba(0,0,0,1),
+    2px 2px 0 rgba(0,0,0,1),
+    3px 3px 0 rgba(0,0,0,1),
+    4px 4px 0 rgba(0,0,0,1),
+    5px 5px 0 rgba(0,0,0,1);
+
+  /* Same thickness/offset as --gt-cell-shadow, slightly softer opacity so
+     it still reads against the lighter gold background of a selected row. */
+  --gt-cell-shadow-selected:
+    1px 1px 0 rgba(0,0,0,0.9),
+    2px 2px 0 rgba(0,0,0,0.9),
+    3px 3px 0 rgba(0,0,0,0.9),
+    4px 4px 0 rgba(0,0,0,0.9),
+    5px 5px 0 rgba(0,0,0,0.9);
+
+  /* Custom cursor: one source of truth, with a small hotspot near the tip
+     of the arrow's point so clicks land where the cursor visually points.
+     The image is kept at 32x32px (the de-facto cross-browser safe size for
+     CSS cursor images) with a small transparent pad on every side around
+     the arrow artwork.
+     Two separate browser behaviors matter here, and both are native
+     browser behavior, not something fixable purely in CSS:
+     1) Chromium/Firefox silently ignore (fall back to the system cursor
+        for) any custom cursor image that doesn't fit entirely between the
+        hotspot and the edge of the viewport. A larger image (this used to
+        be 46x49) made that "dead zone" near every edge of the window much
+        wider. Shrinking to 32x32 shrinks that dead zone to a few pixels,
+        though a sliver right at the very edge can still fall back —
+        that's an upstream browser limitation (see Chromium issue
+        crbug.com/591980 and the "Intent to Deprecate large custom
+        cursors" thread), not a bug in this stylesheet.
+     2) Browsers cap supported custom cursor image size altogether
+        (Chromium/Firefox commonly ignore anything above 128x128, and
+        recommend 32x32 for reliable cross-browser rendering), so keeping
+        the file at 32x32 also avoids the image being dropped outright on
+        some engines. */
+  --gt-cursor: url('assets/cursor/gt_pointer.png') 4 4, auto;
+}
+
+* {
+  box-sizing: border-box;
+  /* Applied on the universal selector (lowest possible specificity) so it
+     never has to fight with — and never gets silently overridden by —
+     more specific rules elsewhere. This also means it applies uniformly
+     to plain text, links, buttons and form fields alike: nothing reverts
+     to the native text-beam or pointing-hand cursor. */
+  cursor: var(--gt-cursor);
+}
+
+app-root {
+  display: block;
+  height: 100%;
+}
+
+html {
+  /* The UI is designed at a ~1280 px canvas.
+     zoom: 0.8 makes 100% browser zoom look identical to what previously
+     required the user to manually set the browser to 80%.
+     height: 125vh compensates so that after the 0.8× zoom is applied the
+     rendered height equals exactly 100% of the physical screen
+     (125vh × 0.8 = 100vh). zoom is kept only on html — putting it on body
+     too would compound the scaling.
+     On mobile (≤900px) zoom is reset to 1 so the browser's own viewport
+     meta tag can handle scaling without compounding. */
+  zoom: 0.8;
+  height: 125vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--font-display);
+  background: #111;
+  color: var(--row-text);
+  cursor: var(--gt-cursor);
+}
+
+@media (max-width: 900px) {
+  html {
+    zoom: 1;
+    height: 100vh;
+    overflow: auto;
+  }
+  body {
+    overflow: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+body {
+  /* body fills html's already-compensated height, no extra zoom needed. */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-display);
+  background: #111;
+  color: var(--row-text);
+  cursor: var(--gt-cursor);
+}
+
+.gt-app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: #1a1a1a;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+}
+
+app-car-table {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 22px 64px 26px;
+  background: #868686;
+  align-items: stretch;
+}
+
+/* ===================== HEADER GROUP =====================
+   Wraps the title bar and the sort-by/filters bar in a single
+   continuous metallic panel — they're separate Angular components,
+   but should read as one piece of UI, matching the reference. */
+
+.gt-header-group {
+  background: #868686;
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.55);
+}
+
+/* ===================== HEADER ===================== */
+
+.gt-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 82px;
+  padding: 0 24px;
+  position: relative;
+  /* Shadow falling from above, anchored at the top-right corner:
+     strong right at that corner, fading to faint by the top-center,
+     and reaching zero well before the top-left corner so that corner
+     stays completely untouched. */
+  background:
+    radial-gradient(ellipse 75% 100% at 100% 0%, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.08) 65%, rgba(0,0,0,0) 85%);
+  background-repeat: no-repeat;
+}
+
+.gt-header__title-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+}
+
+.gt-magnifier-img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 85%;
+  width: auto;
+  filter: drop-shadow(0 4px 5px rgba(0,0,0,0.4));
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.gt-title {
+  position: relative;
+  z-index: 1;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 100;
+  font-style: normal;
+  font-size: 70px;
+  letter-spacing: 0.3px;
+  margin: 0;
+  margin-top: 8px;
+  padding-left: 8px;
+  color: #ffffff;
+  text-shadow:
+    3px 4px 2px rgba(0,0,0,0.5),
+    7px 11px 10px rgba(0,0,0,0.55),
+    11px 17px 16px rgba(0,0,0,0.4);
+}
+
+.gt-header__current {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  color: #ffffff;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.95);
+}
+
+.gt-header__current .gt-cell--year {
+  color: #ffffff;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.95);
+  font-size: inherit; /* same size as the car name – inherits from .gt-header__current */
+}
+
+.gt-header__brand-logo {
+  height: 36px;
+  max-width: 72px;
+  object-fit: contain;
+  filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.6));
+}
+
+.gt-header__color {
+  flex-shrink: 0;
+}
+
+.gt-header__flag {
+  width: 36px;
+  height: 24px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.5);
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.gt-header__date {
+  display: flex;
+  margin-left: 10px;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 5px 6px 8px rgba(0,0,0,0.65);
+}
+
+.gt-date-day {
+  background: #C58F19;
+  color: #2a1500;
+  font-weight: 600;
+  padding: 6.5px 20px;
+  font-size: 28px;
+  text-shadow: none;
+}
+
+.gt-date-month {
+  background: linear-gradient(180deg, #a3a3a3, #d4d4d4);
+  color: #1a1a1a;
+  font-weight: 600;
+  padding: 6.5px 22px;
+  font-size: 28px;
+  text-shadow: none;
+}
+
+/* ===================== FILTER BAR ===================== */
+
+.gt-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 14px 24px 16px 24px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 5;
+}
+
+.gt-sortby {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 56px;
+  margin-left: 120px;
+}
+
+.gt-sortby__label {
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 28px;
+  color: #000000;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* Shared filled rectangle that frames a group of filter controls —
+   solid #79797B fill (not just an outline), squared corners. One panel
+   wraps Country + Manufacturer + Drivetrain together; a second, separate
+   panel wraps Search alone and sits further to the right. */
+.gt-filter-panel {
+  display: flex;
+  align-items: flex-end;
+  gap: 22px;
+  background: #79797B;
+  border-radius: 0;
+  padding: 10px 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+
+/* Pushes the Search panel away from the Country/Manufacturer/Drivetrain
+   group and over toward the "+ New car" button on the far right. */
+.gt-filter-panel--search {
+  margin-left: auto;
+}
+
+.gt-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+  position: relative;
+}
+
+/* Country: 80% wider than the 150px base -> 270px. */
+.gt-filter-group--country { min-width: 270px; }
+
+/* Manufacturer: 120% wider than the 150px base -> 330px. */
+.gt-filter-group--manufacturer { min-width: 330px; }
+
+/* Drivetrain: 40% wider than the 150px base -> 210px. */
+.gt-filter-group--drivetrain { min-width: 210px; }
+
+/* Search: 60% wider than the 220px base -> 352px. */
+.gt-filter-group--search { min-width: 352px; }
+
+.gt-filter-label {
+  font-weight: 700;
+  font-size: 22px;
+  color: #000000;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.25);
+}
+
+.gt-search-input {
+  height: 42px;
+  margin: 0;
+  padding: 0 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: #050505;
+  border: 1px solid var(--coltrigger-border);
+  border-radius: 0;
+  background: #96989E;
+}
+.gt-search-input::placeholder { color: #2a2a2a; opacity: 0.6; font-weight: 600; }
+
+.gt-btn {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.gt-btn--new {
+  background: #C58F19;
+  color: #000000;
+  border: none;
+  box-shadow: 5px 6px 8px rgba(0,0,0,0.65);
+}
+.gt-btn--new:hover { filter: brightness(1.08); }
+
+.gt-btn--ghost {
+  background: #79797B;
+  color: #000000;
+  border-radius: 0;
+  border: 1px solid #000;
+  box-shadow: none;
+}
+.gt-btn--ghost:hover { filter: brightness(1.08); }
+.gt-btn--confirm {
+  background: var(--gold-2);
+  color: #000000;
+  border-radius: 0;
+  border: 1px solid #000;
+  box-shadow: none;
+}
+.gt-btn--confirm:hover { filter: brightness(1.08); }
+.gt-btn--confirm:disabled {
+  opacity: 0.55;
+  cursor: var(--gt-cursor);
+  filter: none;
+}
+.gt-btn--danger {
+  background: #C0392B;
+  color: #fff;
+  border-radius: 0;
+  border: 1px solid #000;
+  box-shadow: none;
+}
+.gt-btn--danger:hover { filter: brightness(1.08); }
+
+/* ===================== IN-HEADER COLUMN PICKERS ===================== */
+
+/* Generic flex row used inside the Name/Year headers to lay out the
+   sort label. */
+.gt-th-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Wraps the dropdown trigger (and, for colC only, the fixed invert
+   button) for the Engine/Power/Weight headers. */
+.gt-col-trigger-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+/* The pill-style trigger that shows the column's current value and opens
+   the option list — flat steel-gray look with a dark arrow well, matching
+   the reference control exactly. */
+.gt-col-trigger {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  border-radius: 0;
+  border: 1px solid #000;
+  background: none;
+  overflow: hidden;
+}
+.gt-col-trigger:hover { filter: brightness(1.04); }
+
+.gt-col-trigger__value {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: #050505;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  /* Base color #96989E: subtle shadow from top, subtle brightening from bottom */
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,0.09) 0%,
+      transparent 32%,
+      transparent 68%,
+      rgba(255,255,255,0.11) 100%
+    ),
+    #96989E;
+}
+
+.gt-col-trigger__arrow {
+  flex: none;
+  width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /*
+   * 0%–40%  : solid #95949A, with a subtle #B6B8BC bleed from the very top (0%)
+   * 40%–100%: solid #B6B8BC (hard cut at the 40% boundary)
+   */
+  background: linear-gradient(0deg,
+    #B6B8BC  0%,    /* B6B8BC bleed at bottom            */
+    #95949A 34%,    /* longer fade into solid #95949A    */
+    #95949A 40%,    /* stays solid until the hard cut    */
+    #B6B8BC 40%,    /* hard cut → solid #B6B8BC          */
+    #B6B8BC 100%    /* solid to top                      */
+  );
+  border-left: none; /* no internal divider — outer black border unifies the two parts */
+}
+.gt-col-trigger__arrow::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 19px solid var(--coltrigger-arrow-color);
+  transition: transform 0.15s ease;
+}
+.gt-col-trigger.is-open .gt-col-trigger__arrow {
+  background: linear-gradient(0deg,
+    #B7905B  0%,
+    #83580D 34%,
+    #83580D 40%,
+    #B7905B 40%,
+    #B7905B 100%
+  );
+}
+.gt-col-trigger.is-open .gt-col-trigger__arrow::before {
+  transform: rotate(180deg);
+}
+/* Filter-bar dropdowns use the same layered gradient as the table triggers. */
+.gt-filter-group .gt-col-trigger__value {
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,0.09) 0%,
+      transparent 32%,
+      transparent 68%,
+      rgba(255,255,255,0.11) 100%
+    ),
+    #96989E;
+}
+
+/* The dropdown's option list, anchored under the trigger. Uses the same
+   base color as the trigger button itself (#96989E) so the open panel
+   visually matches the control it belongs to, just translucent so the
+   table/page behind it still shows through slightly. Capped to a fixed
+   max-height with a scrollbar for lists too long to fit on screen
+   (e.g. Manufacturer, which has far more options than Country or
+   Drivetrain). */
+.gt-col-menu {
+  position: absolute;
+  top: 100%;
+  left: 8px;
+  right: 8px;
+  margin-top: 4px;
+  background: rgba(150, 152, 158, 0.96);
+  border: 1px solid #0a0a0a;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.65);
+  overflow-y: auto;
+  max-height: 60vh;
+  z-index: 30;
+  cursor: var(--gt-cursor);
+
+  /* Scrollbar hidden entirely (rather than just styled) on purpose: the
+     native scrollbar track/thumb are OS-drawn UI that the page's `cursor`
+     rule can't reliably reach in every browser, so hovering over it could
+     silently fall back to the system pointer. Hiding it removes that gap
+     completely; scrolling here still works fine via wheel/trackpad/
+     keyboard, and the list is short enough (plus the already-truncated
+     max-height) that a visible scrollbar isn't essential as an
+     affordance. */
+  scrollbar-width: none;
+}
+.gt-col-menu::-webkit-scrollbar {
+  display: none;
+}
+
+/* Manufacturer has many more entries than Country or Drivetrain,
+   so its dropdown gets a visible, styled scrollbar so users can see
+   there are more items below. */
+.gt-filter-group--manufacturer .gt-col-menu {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-2) rgba(0,0,0,0.3);
+}
+.gt-filter-group--manufacturer .gt-col-menu::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+.gt-filter-group--manufacturer .gt-col-menu::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.25);
+}
+.gt-filter-group--manufacturer .gt-col-menu::-webkit-scrollbar-thumb {
+  background: var(--gold-2);
+  border-radius: 3px;
+}
+
+.gt-col-menu__item {
+  display: block;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  padding: 9px 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: #050505;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.gt-col-menu__item:last-child { border-bottom: none; }
+.gt-col-menu__item:hover { background: rgba(217,164,49,0.2); color: #fff; }
+.gt-col-menu__item.is-active {
+  background: linear-gradient(180deg, var(--gold-1), var(--gold-3));
+  color: #2a1500;
+}
+
+/* Reverse-order button: fixed permanently before the Power (colC) header
+   so its position never moves, regardless of which column is actively
+   sorted. Still inverts whatever sort/manual order is currently active. */
+.gt-invert-btn {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  border: 2px solid var(--invert-border);
+  /*
+   * 0%–40%  : solid #83580D, with a subtle #B7905B bleed from the very top (0%)
+   * 40%–100%: solid #B7905B (hard cut at the 40% boundary)
+   */
+  background: linear-gradient(0deg,
+    #B7905B  0%,    /* B7905B bleed at bottom            */
+    #83580D 34%,    /* longer fade into solid #83580D    */
+    #83580D 40%,    /* stays solid until the hard cut    */
+    #B7905B 40%,    /* hard cut → solid #B7905B          */
+    #B7905B 100%    /* solid to top                      */
+  );
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gt-invert-btn--asc { transform: rotate(180deg); }
+
+.gt-invert-btn__v {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 36px;
+  color: #0a0a0a;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ===================== TABLE ===================== */
+
+.gt-table-outer {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  transform: scale(0.972);
+  transform-origin: top center;
+}
+
+.gt-table-wrap {
+  background: var(--row-dark-1);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Overlay that holds the continuous column divider lines injected by JS */
+.gt-col-dividers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.gt-table-scroller {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.gt-table-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Prev/next page arrows: solid black triangles pointing left/right,
+   fading to transparent away from their base, gently blinking to draw
+   the eye toward more content above/below. Rendered as inline SVG so
+   the fill (black), the base-to-tip fade (a real gradient) and a thin
+   light edge (so the shape reads against the near-black table body)
+   are all exact, rather than relying on box-shadow/clip-path tricks. */
+.gt-page-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 64px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  cursor: var(--gt-cursor);
+}
+
+.gt-page-arrow__shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: gt-arrow-blink 1.6s ease-in-out infinite;
+}
+
+.gt-page-arrow--prev { left: -52px; }
+.gt-page-arrow--next { right: -52px; }
+
+.gt-page-arrow:hover .gt-page-arrow__shape { animation-play-state: paused; opacity: 1; }
+
+.gt-page-arrow:disabled {
+  cursor: var(--gt-cursor);
+  pointer-events: none;
+}
+.gt-page-arrow:disabled .gt-page-arrow__shape {
+  animation: none;
+  opacity: 0.1;
+}
+
+@keyframes gt-arrow-blink {
+  0%, 100% { opacity: 0.95; }
+  50% { opacity: 0.25; }
+}
+
+.gt-table-header {
+  display: grid;
+  grid-template-columns: 50px 84px 1.22fr 34px 77px 0.675fr 42px 0.456fr 0.456fr 142px;
+  column-gap: 0;
+  align-items: center;
+  background: linear-gradient(180deg, #828282 0%, #737373 100%);
+  border-bottom: 2px solid #1a1a1a;
+  height: 64px;
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+
+.gt-th {
+  font-weight: 800;
+  font-size: 26px;
+  color: #1f1f1f;
+  padding: 0 8px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+/* "Car Name" and "Year" headers: lighter weight and pure black, as
+   opposed to the heavier dark-gray weight used elsewhere in the header. */
+.gt-th--name,
+.gt-th--year {
+  font-weight: 700;
+  color: #000000;
+}
+.gt-th:last-child { border-right: none; }
+.gt-th--name,
+.gt-th--year { cursor: default; }
+.gt-th--actions { text-align: center; }
+
+/* Dedicated column for the fixed invert-order button (column 7 in the 10-col grid).
+   The header cell holds the button; every data row has an empty spacer cell so
+   the grid stays aligned between header and body rows. */
+.gt-th--invert {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: visible;
+}
+
+.gt-cell--invert {
+  padding: 0;
+}
+
+/* The variable columns host a popover, so they need their own positioning
+   context and must not clip content that extends past the cell. */
+.gt-th--colB,
+.gt-th--colC,
+.gt-th--colD {
+  position: relative;
+  overflow: visible;
+  white-space: normal;
+  padding: 8px;
+}
+
+.gt-row {
+  display: grid;
+  grid-template-columns: 50px 84px 1.22fr 34px 77px 0.675fr 42px 0.456fr 0.456fr 142px;
+  column-gap: 0;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+  background: var(--row-g1-odd);
+  color: var(--row-text);
+}
+
+/* Group 1: flag(1), logo(2), name(3) — use row background (already set) */
+/* Group 2: color(4), year(5), engine(6) */
+.gt-row > .gt-cell:nth-child(4),
+.gt-row > .gt-cell:nth-child(5),
+.gt-row > .gt-cell:nth-child(6) { background: var(--row-g2-odd); }
+/* Group 3: invert spacer(7), power(8), weight(9), actions(10) — the invert
+   spacer sits directly under the Power column's header button, so it's
+   visually part of that column group and must share its color. */
+.gt-row > .gt-cell:nth-child(7),
+.gt-row > .gt-cell:nth-child(8),
+.gt-row > .gt-cell:nth-child(9),
+.gt-row > .gt-cell:nth-child(10) { background: var(--row-g3-odd); }
+
+.gt-row:nth-child(even) {
+  background: var(--row-g1-even);
+}
+.gt-row:nth-child(even) > .gt-cell:nth-child(4),
+.gt-row:nth-child(even) > .gt-cell:nth-child(5),
+.gt-row:nth-child(even) > .gt-cell:nth-child(6) { background: var(--row-g2-even); }
+.gt-row:nth-child(even) > .gt-cell:nth-child(7),
+.gt-row:nth-child(even) > .gt-cell:nth-child(8),
+.gt-row:nth-child(even) > .gt-cell:nth-child(9),
+.gt-row:nth-child(even) > .gt-cell:nth-child(10) { background: var(--row-g3-even); }
+
+.gt-row--selected,
+.gt-row--selected:nth-child(even) {
+  background: var(--row-g1-sel);
+  color: var(--row-text-selected);
+}
+.gt-row--selected > .gt-cell:nth-child(4),
+.gt-row--selected > .gt-cell:nth-child(5),
+.gt-row--selected > .gt-cell:nth-child(6),
+.gt-row--selected:nth-child(even) > .gt-cell:nth-child(4),
+.gt-row--selected:nth-child(even) > .gt-cell:nth-child(5),
+.gt-row--selected:nth-child(even) > .gt-cell:nth-child(6) { background: var(--row-g2-sel); }
+.gt-row--selected > .gt-cell:nth-child(7),
+.gt-row--selected > .gt-cell:nth-child(8),
+.gt-row--selected > .gt-cell:nth-child(9),
+.gt-row--selected > .gt-cell:nth-child(10),
+.gt-row--selected:nth-child(even) > .gt-cell:nth-child(7),
+.gt-row--selected:nth-child(even) > .gt-cell:nth-child(8),
+.gt-row--selected:nth-child(even) > .gt-cell:nth-child(9),
+.gt-row--selected:nth-child(even) > .gt-cell:nth-child(10) { background: var(--row-g3-sel); }
+
+/* Hover feedback is intentionally restricted to the first three columns
+   (flag, logo, name) only — columns 4 through 10 must never change shade
+   on hover, in either the normal or the selected state. Implemented by
+   painting the lighter hover color directly onto cells 1-3 (the row's
+   own ::before/background never gets touched), rather than relying on
+   the row's background showing through, so this can't be undone by
+   cascade order or specificity from the column-group rules above. */
+.gt-row:hover > .gt-cell:nth-child(1),
+.gt-row:hover > .gt-cell:nth-child(2),
+.gt-row:hover > .gt-cell:nth-child(3) {
+  background: #2e2e2e;
+}
+.gt-row--selected:hover > .gt-cell:nth-child(1),
+.gt-row--selected:hover > .gt-cell:nth-child(2),
+.gt-row--selected:hover > .gt-cell:nth-child(3) {
+  background: var(--row-g1-sel-hover);
+}
+
+.gt-row--dragging {
+  opacity: 0.4;
+}
+
+/* Placeholder rows used to pad the table out to a constant 10 rows when
+   the current page has fewer real cars (e.g. a partial last page). Kept
+   completely inert: no hover feedback, no drag handle, no pointer cursor. */
+.gt-row--empty {
+  cursor: default;
+  pointer-events: none;
+}
+.gt-row--empty:hover > .gt-cell:nth-child(1),
+.gt-row--empty:hover > .gt-cell:nth-child(2),
+.gt-row--empty:hover > .gt-cell:nth-child(3) {
+  background: transparent;
+}
+
+
+.gt-cell {
+  padding: 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.gt-cell--flag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gt-cell--flag img {
+  width: 38px;
+  height: 25px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.5);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.gt-cell--logo img {
+  height: 36px;
+  max-width: 60px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.gt-cell--name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  color: #f3f3f1;
+  letter-spacing: 0.2px;
+  text-shadow: var(--gt-cell-shadow);
+}
+
+.gt-cell--year {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 27px;
+  color: #f3f3f1;
+  text-shadow: var(--gt-cell-shadow);
+}
+.gt-cell--year::before { content: "'"; opacity: 0.7; text-shadow: none; }
+.gt-row--empty .gt-cell--year::before { content: none; }
+
+.gt-cell--color { padding: 6px 8px; }
+.gt-color-rect {
+  width: 18px;
+  height: 34px;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 2px rgba(0,0,0,0.5);
+  position: relative;
+}
+.gt-color-rect::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* Mask 1: straight fade — white at bottom (0%), transparent at 15% */
+    linear-gradient(to top, rgba(255,255,255,0.18) 0%, transparent 15%),
+    /* Mask 2: diagonal band near top — -10.7deg (0%=bottom-right, 100%=top-left).
+       Transparent from 0% to 72.7%, white band from 72.7% to 86.4%, transparent above.
+       = white only near top: left edge 70-85% from bottom, right edge 80-95% from bottom. */
+    linear-gradient(-10.7deg, transparent 68.2%, rgba(255,255,255,0.28) 77%, transparent 95.5%);
+}
+.gt-color-rect__seg { width: 100%; }
+
+.gt-cell--colB {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  color: #f3f3f1;
+  letter-spacing: 0.2px;
+  text-shadow: var(--gt-cell-shadow);
+}
+
+.gt-cell--colC,
+.gt-cell--colD {
+  justify-content: flex-end;
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  color: #f3f3f1;
+  text-shadow: var(--gt-cell-shadow);
+}
+.gt-cell--colC .unit, .gt-cell--colD .unit {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  color: #f3f3f1;
+  margin-left: 2px;
+}
+
+.gt-cell--actions {
+  justify-content: center;
+  gap: 6px;
+  display: flex;
+}
+
+/* Selected rows sit on a bright gold background, so the data-cell text
+   switches to the row's dark selected color instead of the light one
+   above — same per-column treatment, just swapped colors/shadow. */
+.gt-row--selected .gt-cell--name,
+.gt-row--selected .gt-cell--colB,
+.gt-row--selected .gt-cell--colC,
+.gt-row--selected .gt-cell--colD {
+  color: #ffffff;
+  text-shadow: var(--gt-cell-shadow-selected);
+}
+.gt-row--selected .gt-cell--year {
+  color: #ffffff;
+  text-shadow: var(--gt-cell-shadow-selected);
+}
+
+.gt-row__drag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  font-size: 24px;
+  user-select: none;
+}
+.gt-row__drag:hover { opacity: 1; }
+
+.gt-icon-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gt-icon-btn img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+.gt-icon-btn:hover { filter: brightness(1.15); }
+
+.gt-table-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  gap: 16px;
+  padding: 10px 20px;
+  background: #737373;
+  font-weight: 700;
+  font-size: 26px;
+  color: #000000;
+}
+
+.gt-table-footer__page {
+  position: absolute;
+  right: 20px;
+  font-weight: 700;
+  font-size: 26px;
+  color: #000000;
+}
+
+.gt-table-footer__hint {
+  font-size: 24px;
+  font-weight: 700;
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.gt-empty-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ===================== MODAL ===================== */
+
+.gt-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.gt-modal-overlay.is-open { display: flex; }
+
+.gt-modal {
+  width: 640px;
+  max-height: 88vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #222222;
+  border-radius: 0;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+  border: 1px solid #000;
+  cursor: var(--gt-cursor);
+
+  /* Scrollbar hidden entirely (rather than just styled) on purpose: the
+     native scrollbar track/thumb are OS-drawn UI that the page's `cursor`
+     rule can't reliably reach in every browser, so hovering over it could
+     silently fall back to the system pointer. Hiding it removes that gap
+     completely; scrolling here still works fine via wheel/trackpad/
+     keyboard. */
+  scrollbar-width: none;
+}
+.gt-modal::-webkit-scrollbar {
+  display: none;
+}
+.gt-modal--small { width: 400px; }
+
+/* Remove-car confirmation modal: restyled to match the rest of the app's
+   flat, squared-off look (solid colors, hard black borders, no gradients
+   or italics) instead of the soft gradient/rounded-corner treatment used
+   elsewhere. Scoped to .gt-modal--small only, so the car add/edit modal
+   (which reuses the base .gt-modal classes) is left untouched. */
+.gt-modal--small {
+  background: #222222;
+  border-radius: 0;
+  border: 1px solid #000;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+}
+.gt-modal--small .gt-modal__header {
+  background: #79797B;
+  border-bottom: 1px solid #000;
+  border-top: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.2);
+  padding: 14px 20px;
+}
+.gt-modal--small .gt-modal__header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  font-style: normal;
+  color: #000000;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+}
+.gt-modal--small .gt-modal__body {
+  padding: 22px 20px;
+  gap: 10px;
+}
+.gt-modal--small .gt-modal__body p {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #e8e8e8;
+}
+.gt-modal--small .gt-modal__body p strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+.gt-modal--small .gt-modal__hint {
+  font-size: 18px;
+  font-weight: 600;
+  color: #9a9a9a;
+}
+.gt-modal--small .gt-modal__footer {
+  background: #1a1a1a;
+  border-top: 1px solid #000;
+  padding: 14px 20px;
+}
+.gt-modal--small .gt-btn {
+  font-weight: 700;
+  font-size: 20px;
+  padding: 9px 20px;
+  border-radius: 0;
+  border: 1px solid #000;
+  box-shadow: none;
+}
+.gt-modal--small .gt-btn--ghost {
+  background: #79797B;
+  color: #000000;
+}
+.gt-modal--small .gt-btn--ghost:hover { filter: brightness(1.08); }
+.gt-modal--small .gt-btn--danger {
+  background: #C0392B;
+  color: #ffffff;
+}
+.gt-modal--small .gt-btn--danger:hover { filter: brightness(1.08); }
+
+.gt-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #79797B;
+  border-bottom: 1px solid #000;
+  border-top: 3px solid var(--gold-2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+.gt-modal__header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  font-style: normal;
+  color: #000000;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+}
+.gt-modal__close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1;
+}
+.gt-modal__close:hover { filter: brightness(1.3); }
+
+.gt-modal__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Section headers (Identity / Engine & performance / Dimensions) that
+   group the form's fields into readable chunks. Plain dark background
+   with a gold accent bar on the left — the same accent color used for
+   the active/selected states elsewhere in the app — rather than a full
+   colored banner, to keep the long form scannable without it turning
+   busy. */
+.gt-form-section__title {
+  margin: 6px 0 -4px;
+  padding: 6px 0 6px 12px;
+  border-left: 4px solid var(--gold-2);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gold-1);
+}
+.gt-form-section__title:first-child { margin-top: 0; }
+
+.gt-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.gt-form-row label {
+  font-size: 18px;
+  font-weight: 700;
+  color: #b8b8b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.gt-form-row input,
+.gt-form-row select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 20px;
+  padding: 9px 10px;
+  border-radius: 0;
+  border: 1px solid #000;
+  background: #96989E;
+  color: #050505;
+  cursor: var(--gt-cursor);
+}
+.gt-form-row input::placeholder { color: #2a2a2a; opacity: 0.65; }
+.gt-form-row input:focus,
+.gt-form-row select:focus {
+  outline: none;
+  border-color: var(--gold-2);
+}
+
+.gt-form-row--split {
+  flex-direction: row;
+  gap: 14px;
+}
+.gt-form-row--split > div {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+/* When a short numeric field sits next to a longer dropdown (Creation
+   year + Drivetrain, Max RPM + Engine layout), give the dropdown more
+   of the row instead of forcing a rigid 50/50 split that leaves the
+   number field oversized and the dropdown's text cramped. */
+.gt-form-row--split > div.gt-form-col--narrow { flex: 0.8; }
+.gt-form-row--split > div.gt-form-col--wide { flex: 1.2; }
+.gt-form-row--split3 {
+  flex-direction: row;
+  gap: 14px;
+}
+.gt-form-row--split3 > div {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.gt-color-input-wrap {
+  display: flex;
+  gap: 8px;
+}
+.gt-color-input-wrap input[type="color"] {
+  width: 44px;
+  padding: 2px;
+  flex: none;
+}
+.gt-color-input-wrap input[type="text"] {
+  flex: 1;
+  text-transform: uppercase;
+}
+
+.gt-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #000;
+  background: #1a1a1a;
+}
+
+/* ===================== TOAST ===================== */
+
+.gt-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: linear-gradient(180deg, var(--gold-1), var(--gold-3));
+  color: #3a2400;
+  font-weight: 800;
+  font-size: 20px;
+  padding: 12px 22px;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 100;
+}
+.gt-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.gt-toast.is-error {
+  background: linear-gradient(180deg, #e0594a, #a3271a);
+  color: #fff;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+/* ======================================================================
+   PORTRAIT MOBILE  (≤ 900 px wide, portrait only)
+   ====================================================================== */
+@media (max-width: 900px) and (orientation: portrait) {
+  /* ── html / body ── */
+  html {
+    zoom: 1;
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+  body {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  /* ── Layout ── */
+  /* Background matches the table/filter-bar grey so the area below the
+     table rows doesn't look black when the content is shorter than the
+     full viewport. */
+  .gt-app {
+    margin: 0;
+    border-radius: 0;
+    overflow: auto;
+    height: auto;
+    min-height: 100dvh;
+    background: #868686;
+  }
+
+  /* ── Header ── */
+  .gt-header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .gt-magnifier-img { height: 52px; }
+  .gt-title { font-size: 42px; }
+  .gt-header__current {
+    font-size: 16px;     /* car name size */
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  /* Year inherits 16 px from .gt-header__current (same as car name).
+     The global .gt-header__current .gt-cell--year rule already says
+     font-size:inherit, but we re-state it here with higher specificity
+     to ensure the 27 px table-cell default never bleeds in on mobile. */
+  .gt-header__current .gt-cell--year {
+    font-size: 16px !important;
+  }
+  .gt-header__brand-logo { height: 24px; max-width: 48px; }
+  .gt-header__flag { width: 24px; height: 16px; }
+  .gt-date-day, .gt-date-month { font-size: 18px; padding: 4px 10px; }
+
+  /* ── Filter bar ── */
+  .gt-filterbar { padding: 8px 12px; gap: 10px; flex-wrap: wrap; }
+  .gt-sortby { padding-left: 0; margin-left: 0; }
+  .gt-sortby__label { font-size: 18px; }
+  .gt-filter-panel { flex-wrap: wrap; gap: 8px; padding: 6px 10px; }
+  .gt-filter-panel--search { margin-left: 0; }
+  .gt-filter-group--country,
+  .gt-filter-group--manufacturer,
+  .gt-filter-group--drivetrain,
+  .gt-filter-group--search { min-width: 120px; }
+  .gt-filter-label { font-size: 14px; }
+  .gt-col-trigger__value { font-size: 14px; padding: 0 8px; }
+  .gt-col-trigger { height: 30px; }
+  .gt-col-trigger__arrow { width: 28px; }
+  .gt-col-menu__item { font-size: 14px; padding: 6px 10px; }
+  .gt-search-input { height: 30px; font-size: 13px; padding: 0 8px; }
+  .gt-btn { font-size: 13px; padding: 5px 10px; }
+  .gt-btn--new { font-size: 13px; }
+
+  /* ── Table wrapper ── */
+  app-car-table {
+    padding: 6px 28px 10px;
+    overflow: visible;
+    flex: none;
+    min-height: 0;
+  }
+  .gt-table-outer { height: auto; }
+  .gt-table-wrap { overflow: visible; height: auto; }
+  .gt-table-scroller { flex: none; overflow: visible; }
+  .gt-table-body { overflow: visible; flex: none; }
+
+  /* ── Page arrows ── */
+  .gt-page-arrow--prev { left: -24px; }
+  .gt-page-arrow--next { right: -24px; }
+  .gt-page-arrow { width: 22px; height: 48px; }
+
+  /* ── Table grid ──
+     All 10 columns preserved:
+     flag | logo | name | color | year | colB (engine/drivetrain) |
+     invert | colC (HP/RPM/torque) | colD (weight/dimensions) | actions */
+  .gt-table-header,
+  .gt-row {
+    grid-template-columns:
+      24px            /* flag */
+      30px            /* logo */
+      minmax(0,1fr)   /* name */
+      20px            /* color */
+      34px            /* year */
+      minmax(0,0.85fr) /* colB */
+      26px            /* invert */
+      minmax(0,0.65fr) /* colC */
+      minmax(0,0.65fr) /* colD */
+      48px;           /* actions */
+  }
+
+  /* ── Row height — explicit so rows never collapse to 0 in portrait ── */
+  .gt-row {
+    flex: none;
+    min-height: 38px;
+  }
+
+  /* ── Font sizes (slightly smaller than before for better fit) ── */
+  .gt-th { font-size: 11px; padding: 0 2px; }
+  .gt-cell { font-size: 11px; padding: 0 2px; }
+  .gt-cell--name  { font-size: 11px; }
+  .gt-cell--year  { font-size: 11px; }
+  .gt-cell--colB  { font-size: 11px; }
+  .gt-cell--colC,
+  .gt-cell--colD  { font-size: 11px; }
+  .gt-cell--colC .unit,
+  .gt-cell--colD .unit { font-size: 10px; }
+
+  /* ── Color rect ── */
+  .gt-color-rect { width: 12px; height: 24px; }
+  .gt-cell--color { padding: 3px 2px; }
+
+  /* ── Flag / logo ── */
+  .gt-cell--flag img { width: 20px; height: 14px; }
+  .gt-cell--logo img { height: 20px; max-width: 26px; }
+
+  /* ── Invert button ── */
+  .gt-invert-btn { width: 26px; height: 26px; }
+  .gt-invert-btn__v { font-size: 18px; }
+
+  /* ── Column triggers inside table header ── */
+  .gt-th--colB .gt-col-trigger,
+  .gt-th--colC .gt-col-trigger,
+  .gt-th--colD .gt-col-trigger { height: 28px; }
+  .gt-th--colB .gt-col-trigger__value,
+  .gt-th--colC .gt-col-trigger__value,
+  .gt-th--colD .gt-col-trigger__value { font-size: 11px; padding: 0 3px; }
+  .gt-th--colB .gt-col-trigger__arrow,
+  .gt-th--colC .gt-col-trigger__arrow,
+  .gt-th--colD .gt-col-trigger__arrow { width: 20px; }
+  .gt-col-trigger__arrow::before {
+    border-left-width: 6px;
+    border-right-width: 6px;
+    border-top-width: 10px;
+  }
+
+  /* ── Action buttons ── */
+  .gt-icon-btn { width: 22px; height: 22px; }
+  .gt-icon-btn img { width: 18px; height: 18px; }
+  .gt-cell--actions { gap: 2px; }
+
+  /* ── Table header height ── */
+  .gt-table-header { height: 40px; }
+
+  /* ── Footer ── */
+  .gt-table-footer { font-size: 14px; padding: 6px 12px; }
+  .gt-table-footer__page { font-size: 14px; }
+
+  /* ── Modal ── */
+  .gt-modal { width: 94vw; max-height: 92vh; }
+  .gt-form-row--split, .gt-form-row--split3 { flex-direction: column; }
+  .gt-modal__body { padding: 14px; gap: 10px; }
+}
+
+/* ======================================================================
+   LANDSCAPE MOBILE  (any phone in landscape — max-height: 600 px covers
+   all phones but NOT tablets or desktops which are ≥ 768 px tall)
+   Strategy: keep the desktop visual layout but unlock vertical scrolling
+   so the user can scroll down to see all table rows.
+   ====================================================================== */
+@media (orientation: landscape) and (max-height: 600px) {
+  html {
+    /* Remove the 125vh / overflow:hidden desktop lock; let content set height */
+    height: auto;
+    overflow-y: auto;
+  }
+  body {
+    height: auto;
+    overflow-y: auto;
+  }
+  .gt-app {
+    /* Allow the app to grow beyond the viewport and be scrolled */
+    height: auto;
+    overflow: visible;
+    min-height: 100dvh;
+    background: #868686;    /* no black gap below content */
+  }
+
+  /* ── Table: un-clip so rows are visible and the page can scroll ── */
+  app-car-table {
+    flex: none;
+    overflow: visible;
+  }
+  .gt-table-outer  { height: auto; }
+  .gt-table-wrap   { height: auto; overflow: visible; }
+  .gt-table-scroller { flex: none; overflow: visible; }
+  .gt-table-body   { flex: none; overflow: visible; }
+
+  /* ── Row height — explicit so rows don't collapse to 0 when the flex
+     parent has no fixed height in the scrollable layout ── */
+  .gt-row {
+    flex: none;
+    min-height: 50px;
+  }
+
+  /* ── Year in header — same size as car name ── */
+  .gt-header__current .gt-cell--year {
+    font-size: inherit !important;
+  }
+}

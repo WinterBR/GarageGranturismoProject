@@ -12,6 +12,34 @@ import { AudioService } from '../../services/audio.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="gt-login-screen" (click)="onFirstInteraction()">
+      @if (showCredsBanner()) {
+        <div class="gt-info-banner gt-info-banner--top" (click)="$event.stopPropagation()">
+          <span class="gt-info-banner__text">
+            Usuário de teste: <strong>admin</strong> &nbsp;/&nbsp; Senha: <strong>user1234</strong>
+          </span>
+          <button
+            type="button"
+            class="gt-info-banner__close"
+            title="Fechar"
+            (click)="showCredsBanner.set(false)"
+          >&times;</button>
+        </div>
+      }
+
+      @if (showBootBanner()) {
+        <div class="gt-info-banner gt-info-banner--corner" (click)="$event.stopPropagation()">
+          <span class="gt-info-banner__text">
+            O back-end pode levar de <strong>1 a 3 minutos</strong> para iniciar (veja o README). Se o login falhar de primeira, aguarde um pouco e tente novamente.
+          </span>
+          <button
+            type="button"
+            class="gt-info-banner__close"
+            title="Fechar"
+            (click)="showBootBanner.set(false)"
+          >&times;</button>
+        </div>
+      }
+
       <button
         type="button"
         class="gt-mute-btn"
@@ -95,6 +123,72 @@ import { AudioService } from '../../services/audio.service';
         background-repeat: no-repeat;
       }
 
+      .gt-info-banner {
+        position: absolute;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #1a1a1a;
+        border: 1px solid #000;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        color: #e6e6e6;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+        padding: 12px 16px;
+      }
+
+      .gt-info-banner--top {
+        top: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 520px;
+        border-left: 3px solid #c9a227;
+      }
+
+      .gt-info-banner--corner {
+        bottom: 22px;
+        right: 28px;
+        max-width: 340px;
+        border-left: 3px solid #c0392b;
+      }
+
+      .gt-info-banner__text strong {
+        color: #fff;
+      }
+
+      .gt-info-banner__close {
+        flex: 0 0 auto;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        color: #d6d6d6;
+        border: 1px solid #444;
+        cursor: var(--gt-cursor);
+        font-size: 16px;
+        line-height: 1;
+      }
+      .gt-info-banner__close:hover { filter: brightness(1.3); }
+
+      @media (max-width: 600px) {
+        .gt-info-banner--top {
+          left: 12px;
+          right: 12px;
+          transform: none;
+          max-width: none;
+        }
+        .gt-info-banner--corner {
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+          max-width: none;
+        }
+      }
+
       .gt-mute-btn {
         position: absolute;
         top: 22px;
@@ -174,6 +268,9 @@ export class LoginComponent implements OnInit {
 
   readonly loading      = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  readonly showCredsBanner = signal(true);
+  readonly showBootBanner  = signal(true);
 
   constructor(
     private authService: AuthService,
